@@ -26,10 +26,10 @@ class OrderedMapIterator<K,V> {
     public inline function next() : V
         return map.get( map._keys[index++] );
 
-} //OrderedMapIterator
+}
 
 @:generic
-class OrderedMap<K, V> implements IMap<K, V> {
+class OrderedMap<K, V> /*implements IMap<K, V>*/ {
 
     @:noCompletion public var map:Map<K, V>;
     var idx = 0;
@@ -41,6 +41,12 @@ class OrderedMap<K, V> implements IMap<K, V> {
        _keys = [];
        map = _map;
     }
+
+#if (haxe_ver >= "4.0.0")
+    public inline function copy() {
+        return this.copy();
+    }
+#end
 
     public inline function set(key:K, value:V) {
         if (!map.exists(key)) _keys.push(key);
@@ -59,4 +65,4 @@ class OrderedMap<K, V> implements IMap<K, V> {
     public inline function get(key)            return map.get(key);
     public inline function keys()              return _keys.iterator();
 
-} //OrderedMap
+}

@@ -39,8 +39,8 @@ class RenderState {
                         GL.enable(GL.DEPTH_TEST);
                     }
                 } //!depth_test
-        } //switch
-    } //enable_if_not
+        }
+    }
 
     public function disable( what:Int ) {
         switch(what) {
@@ -53,16 +53,16 @@ class RenderState {
                 if(cull_face) {
                     cull_face = false;
                     GL.disable(GL.CULL_FACE);
-                } //cull_face
+                }
             case GL.DEPTH_TEST:
                 if(Luxe.core.app.config.render.depth > 0) {
                     if(depth_test) {
                         depth_test = false;
                         GL.disable(GL.DEPTH_TEST);
                     }
-                } //depth_test
-        } //switch
-    } //disable_if_not
+                }
+        }
+    }
 
     var depth_func : Int = -1;
     public function depth_function( what:Int ) {
@@ -70,7 +70,7 @@ class RenderState {
             GL.depthFunc( what );
             depth_func = what;
         }
-    } //depth_function
+    }
 
     public function scissor(x:Float, y:Float, w:Float, h:Float) {
 
@@ -90,7 +90,7 @@ class RenderState {
 
         GL.scissor(Std.int(x), Std.int(_y), Std.int(w), Std.int(h));
 
-    } //scissor
+    }
 
     public function viewport(x:Float, y:Float, w:Float, h:Float) {
 
@@ -115,41 +115,41 @@ class RenderState {
 
         GL.viewport(Std.int(x), Std.int(_y), Std.int(w), Std.int(h));
 
-    } //viewport
+    }
 
-    @:noCompletion public var current_framebuffer : GLFramebuffer = null;
-    public function bindFramebuffer( ?buffer:GLFramebuffer=null ) {
+    @:noCompletion public var current_framebuffer : GLFramebuffer = #if snow_web null #else 0 #end;
+    public function bindFramebuffer( buffer:GLFramebuffer ) {
 
         if(current_framebuffer != buffer) {
 
-            def(buffer, renderer.default_framebuffer);
+            if (buffer == #if snow_web null #else 0 #end) buffer = renderer.default_framebuffer;
 
             GL.bindFramebuffer( GL.FRAMEBUFFER, buffer );
             current_framebuffer = buffer;
         }
 
-    } //bindFrameBuffer
+    }
 
-    @:noCompletion public var current_renderbuffer : GLRenderbuffer = null;
-    public function bindRenderbuffer( ?buffer:GLRenderbuffer=null ) {
+    @:noCompletion public var current_renderbuffer : GLRenderbuffer = #if snow_web null #else 0 #end;
+    public function bindRenderbuffer( buffer:GLRenderbuffer ) {
 
         if(current_renderbuffer != buffer) {
 
-            def(buffer, renderer.default_renderbuffer);
+            if (buffer == #if snow_web null #else 0 #end) buffer = renderer.default_renderbuffer;
 
             GL.bindRenderbuffer( GL.RENDERBUFFER, buffer );
             current_renderbuffer = buffer;
         }
 
-    } //bindRenderbuffer
+    }
 
-    var _used_program : GLProgram = null;
+    var _used_program : GLProgram = #if snow_web null #else 0 #end;
     public function useProgram( program:GLProgram ) {
         if(_used_program != program) {
             _used_program = program;
             GL.useProgram( program );
         }
-    } //useProgram
+    }
 
     var _active_texture = -1;
     public function activeTexture( val:Int ) {
@@ -157,7 +157,7 @@ class RenderState {
             GL.activeTexture(val);
             _active_texture = val;
         }
-    } //activeTexture
+    }
 
     public inline function bindTexture( type:TextureType, tex:TextureID ) {
         switch(type) {
@@ -168,7 +168,7 @@ class RenderState {
         }
     }
 
-    public static var bound_texture_2D : TextureID = null;
+    public static var bound_texture_2D : TextureID = #if snow_web null #else 0 #end;
     public function bindTexture2D( tex:TextureID ) {
         if(bound_texture_2D != tex) {
             bound_texture_2D = tex;
@@ -176,7 +176,7 @@ class RenderState {
         }
     }
 
-    public static var bound_texture_cube : TextureID = null;
+    public static var bound_texture_cube : TextureID = #if snow_web null #else 0 #end;
     public function bindTextureCube( tex:TextureID ) {
         if(bound_texture_cube != tex) {
             bound_texture_cube = tex;
@@ -200,4 +200,4 @@ class RenderState {
         }
     }
 
-} //RenderState
+}

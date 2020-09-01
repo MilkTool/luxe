@@ -18,9 +18,9 @@ class Vector {
 
     public var ignore_listeners : Bool = false;
 
-    @:isVar public var listen_x(default,default) : Float -> Void;
-    @:isVar public var listen_y(default,default) : Float -> Void;
-    @:isVar public var listen_z(default,default) : Float -> Void;
+    @:isVar public var listen_x(default,default) : Vector -> Void;
+    @:isVar public var listen_y(default,default) : Vector -> Void;
+    @:isVar public var listen_z(default,default) : Vector -> Void;
 
     var _construct = false;
 
@@ -35,7 +35,7 @@ class Vector {
 
         _construct = false;
 
-    } //new
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function copy_from( _other:Vector ) {
@@ -44,69 +44,104 @@ class Vector {
 
         return this;
 
-    } //copy_from
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function set( _x:Float, _y:Float, _z:Float, _w:Float ) {
 
         var prev = ignore_listeners;
+        var changed = false;
 
         ignore_listeners = true;
 
-            x = _x;
-            y = _y;
-            z = _z;
-            w = _w;
+            if (x != _x) {
+                changed = true;
+                x = _x;
+            }
+            if (y != _y) {
+                changed = true;
+                y = _y;
+            }
+            if (z != _z) {
+                changed = true;
+                z = _z;
+            }
+            if (w != _w) {
+                w = _w;
+            }
 
         ignore_listeners = prev;
 
-        if(listen_x != null && !ignore_listeners) listen_x(x);
-        if(listen_y != null && !ignore_listeners) listen_y(y);
-        if(listen_z != null && !ignore_listeners) listen_z(z);
+        if (changed && !ignore_listeners) {
+            if(listen_x != null) listen_x(this);
+            if(listen_y != null) listen_y(this);
+            if(listen_z != null) listen_z(this);
+        }
 
         return this;
 
-    } //set
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function set_xy( _x:Float, _y:Float ) {
 
         var prev = ignore_listeners;
+        var changed = false;
 
         ignore_listeners = true;
 
-            x = _x;
-            y = _y;
+            if (x != _x) {
+                changed = true;
+                x = _x;
+            }
+            if (y != _y) {
+                changed = true;
+                y = _y;
+            }
 
         ignore_listeners = prev;
 
-        if(listen_x != null && !ignore_listeners) listen_x(x);
-        if(listen_y != null && !ignore_listeners) listen_y(y);
+        if (changed && !ignore_listeners) {
+            if(listen_x != null) listen_x(this);
+            if(listen_y != null) listen_y(this);
+        }
 
         return this;
 
-    } //set_xy
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function set_xyz( _x:Float, _y:Float, _z:Float ) {
 
         var prev = ignore_listeners;
+        var changed = false;
 
         ignore_listeners = true;
 
-            x = _x;
-            y = _y;
-            z = _z;
+            if (x != _x) {
+                changed = true;
+                x = _x;
+            }
+            if (y != _y) {
+                changed = true;
+                y = _y;
+            }
+            if (z != _z) {
+                changed = true;
+                z = _z;
+            }
 
         ignore_listeners = prev;
 
-        if(listen_x != null && !ignore_listeners) listen_x(x);
-        if(listen_y != null && !ignore_listeners) listen_y(y);
-        if(listen_z != null && !ignore_listeners) listen_z(z);
+        if (changed && !ignore_listeners) {
+            if(listen_x != null) listen_x(this);
+            if(listen_y != null) listen_y(this);
+            if(listen_z != null) listen_z(this);
+        }
 
         return this;
 
-    } //set_xyz
+    }
 
         //_t is between 0 and 1
     #if !luxe_no_hotpath_inline @:extern inline #end
@@ -119,7 +154,7 @@ class Vector {
 
         return this;
 
-    } //lerp_xy
+    }
 
         //_t is between 0 and 1
     #if !luxe_no_hotpath_inline @:extern inline #end
@@ -133,7 +168,7 @@ class Vector {
 
         return this;
 
-    } //lerp_xyz
+    }
 
         //_t is between 0 and 1
     #if !luxe_no_hotpath_inline @:extern inline #end
@@ -147,7 +182,7 @@ class Vector {
 
         return this;
 
-    } //lerp
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function weighted_average_xy( _dest_x:Float, _dest_y:Float, _slowness:Float ) {
@@ -159,7 +194,7 @@ class Vector {
 
         return this;
 
-    } //weighted_average_xy
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function weighted_average_xyz( _dest_x:Float, _dest_y:Float, _dest_z:Float, _slowness:Float ) {
@@ -172,7 +207,7 @@ class Vector {
 
         return this;
 
-    } //weighted_average_xyz
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function int() {
@@ -181,7 +216,7 @@ class Vector {
 
         return this;
 
-    } //int
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function int_x() {
@@ -190,7 +225,7 @@ class Vector {
 
         return this;
 
-    } //int_z
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function int_y() {
@@ -199,7 +234,7 @@ class Vector {
 
         return this;
 
-    } //int_y
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function int_z() {
@@ -208,13 +243,13 @@ class Vector {
 
         return this;
 
-    } //int_y
+    }
 
     inline function toString() {
 
         return "{ x:"+x + ", y:" + y + ", z:" + z  + " }" ;
 
-    } //toString
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function equals(other:Vector) {
@@ -224,19 +259,19 @@ class Vector {
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function clone() {
         return new Vector(x, y, z, w);
-    } //clone
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function normalize() {
         return divideScalar( length );
-    } //normalize
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function dot(other:Vector) {
 
         return x * other.x + y * other.y + z * other.z;
 
-    } //dot
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function cross( a:Vector, b:Vector ) {
@@ -247,7 +282,7 @@ class Vector {
 
         return this;
 
-    } //cross
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function invert() : Vector {
@@ -256,7 +291,7 @@ class Vector {
 
         return this;
 
-    } //invert
+    }
 
 //Static Functions
 
@@ -267,7 +302,7 @@ class Vector {
             a.y + b.y,
             a.z + b.z
         );
-    } //Add
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function Subtract(a:Vector, b:Vector) {
@@ -276,7 +311,7 @@ class Vector {
             a.y - b.y,
             a.z - b.z
         );
-    } //Subtract
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function MultiplyVector(a:Vector, b:Vector) : Vector {
@@ -285,7 +320,7 @@ class Vector {
             a.y * b.y,
             a.z * b.z
         );
-    } //MultiplyVector
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function DivideVector(a:Vector, b:Vector) {
@@ -294,7 +329,7 @@ class Vector {
             a.y / b.y,
             a.z / b.z
         );
-    } //DivideVector
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function Multiply(a:Vector, b:Float) {
@@ -303,7 +338,7 @@ class Vector {
             a.y * b,
             a.z * b
         );
-    } //Multiply
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function Divide(a:Vector, b:Float) {
@@ -312,7 +347,7 @@ class Vector {
             a.y / b,
             a.z / b
         );
-    } //Divide
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function AddScalar(a:Vector, b:Float) {
@@ -321,7 +356,7 @@ class Vector {
             a.y + b,
             a.z + b
         );
-    } //AddScalar
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function SubtractScalar(a:Vector, b:Float) {
@@ -330,7 +365,7 @@ class Vector {
             a.y - b,
             a.z - b
         );
-    } //SubtractScalar
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function Cross(a:Vector, b:Vector) {
@@ -339,23 +374,23 @@ class Vector {
              a.z * b.x - a.x * b.z,
              a.x * b.y - a.y * b.x
         );
-    } //Cross
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function RotationTo(a:Vector,b:Vector) {
 
         return a.rotationTo(b);
 
-    } //RotationTo
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
-    public static function Listen( _v:Vector, listener ) {
+    public static function Listen( _v:Vector, listener:Vector->Void ) {
 
         _v.listen_x = listener;
         _v.listen_y = listener;
         _v.listen_z = listener;
 
-    } //Listen
+    }
 
         //_t is between 0 and 1
     #if !luxe_no_hotpath_inline @:extern inline #end
@@ -367,7 +402,7 @@ class Vector {
             Maths.lerp(a.z, b.z, t)
         );
 
-    } //Lerp
+    }
 
 // Operations
 
@@ -380,7 +415,7 @@ class Vector {
 
         return this;
 
-    } //add
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function add_xyz( _x:Float = 0, _y:Float = 0, _z:Float = 0 ) {
@@ -389,7 +424,7 @@ class Vector {
 
         return this;
 
-    } //add_xyz
+    }
 
 
     #if !luxe_no_hotpath_inline @:extern inline #end
@@ -401,7 +436,7 @@ class Vector {
 
         return this;
 
-    } //subtract
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function subtract_xyz( _x:Float = 0, _y:Float = 0, _z:Float = 0 ) {
@@ -410,7 +445,7 @@ class Vector {
 
         return this;
 
-    } //subtract_xyz
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function multiply(other:Vector) {
@@ -421,7 +456,7 @@ class Vector {
 
         return this;
 
-    } //multiply
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function multiply_xyz( _x:Float = 1, _y:Float = 1, _z:Float = 1 ) {
@@ -430,7 +465,7 @@ class Vector {
 
         return this;
 
-    } //multiply_xyz
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function divide(other:Vector) {
@@ -443,7 +478,7 @@ class Vector {
 
         return this;
 
-    } //divide
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function divide_xyz( _x:Float = 1, _y:Float = 1, _z:Float = 1 ) {
@@ -456,7 +491,7 @@ class Vector {
 
         return this;
 
-    } //multiply_xyz
+    }
 
 
     #if !luxe_no_hotpath_inline @:extern inline #end
@@ -466,7 +501,7 @@ class Vector {
 
         return this;
 
-    } //addScalar
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function subtractScalar( v:Float ) {
@@ -475,7 +510,7 @@ class Vector {
 
         return this;
 
-    } //subtractScalar
+    }
 
      #if !luxe_no_hotpath_inline @:extern inline #end
      public function multiplyScalar( v:Float ) {
@@ -484,7 +519,7 @@ class Vector {
 
         return this;
 
-    } //multiplyScalar
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function divideScalar( v:Float ) : Vector {
@@ -501,7 +536,7 @@ class Vector {
 
         return this;
 
-    } //divideScalar
+    }
 
 
 //Properties
@@ -513,14 +548,14 @@ class Vector {
 
         return value;
 
-    } //set_length
+    }
 
     #if !luxe_no_hotpath_inline @:extern #end
     inline function get_length() : Float {
 
         return Math.sqrt( x * x + y * y + z * z );
 
-    } //get_length
+    }
 
 
     #if !luxe_no_hotpath_inline @:extern #end
@@ -528,14 +563,14 @@ class Vector {
 
         return x * x + y * y + z * z;
 
-    } //get_lengthsq
+    }
 
     #if !luxe_no_hotpath_inline @:extern #end
     inline function get_normalized() {
 
         return Vector.Divide( this, length );
 
-    } //get_normalized
+    }
 
     // #if !luxe_no_hotpath_inline @:extern #end
     inline function set_x(_x:Float) : Float {
@@ -544,11 +579,11 @@ class Vector {
 
         if(_construct) return x;
 
-            if(listen_x != null && !ignore_listeners) listen_x(_x);
+            if(listen_x != null && !ignore_listeners) listen_x(this);
 
         return x;
 
-    } //set_x
+    }
 
     // #if !luxe_no_hotpath_inline @:extern #end
     inline function set_y(_y:Float) : Float {
@@ -557,11 +592,11 @@ class Vector {
 
         if(_construct) return y;
 
-            if(listen_y != null && !ignore_listeners) listen_y(_y);
+            if(listen_y != null && !ignore_listeners) listen_y(this);
 
         return y;
 
-    } //set_y
+    }
 
     // #if !luxe_no_hotpath_inline @:extern #end
     inline function set_z(_z:Float) : Float {
@@ -570,18 +605,18 @@ class Vector {
 
         if(_construct) return z;
 
-            if(listen_z != null && !ignore_listeners) listen_z(_z);
+            if(listen_z != null && !ignore_listeners) listen_z(this);
 
         return z;
 
-    } //set_z
+    }
 
     #if !luxe_no_hotpath_inline @:extern #end
     inline function get_inverted() : Vector {
 
         return new Vector(-x,-y,-z);
 
-    } //get_inverted
+    }
 
 
         //Changes the angle of the vector.
@@ -616,7 +651,7 @@ class Vector {
 
         return this;
 
-    } //truncate
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function rotationTo( other:Vector ) : Float {
@@ -646,7 +681,7 @@ class Vector {
 
         return this;
 
-    } //applyQuaternion
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function applyProjection( m:Matrix ) : Vector {
@@ -661,7 +696,7 @@ class Vector {
 
         return this;
 
-    } //applyProjection
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function transform( _m:Matrix ) : Vector {
@@ -678,7 +713,7 @@ class Vector {
 
         return this;
 
-    } //transform
+    }
     
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function transformDirection( m:Matrix ) : Vector {
@@ -694,7 +729,7 @@ class Vector {
 
         return this;
 
-    } //transformDirection
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function setEulerFromRotationMatrix (m:Matrix, order:ComponentOrder = XYZ) : Vector {
@@ -781,13 +816,13 @@ class Vector {
                 _y = 0;
             }
 
-        } //order
+        }
 
         set_xyz(_x, _y, _z);
 
         return this;
 
-    } //setEulerFromRotationMatrix
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function setEulerFromQuaternion (q:Quaternion, order:ComponentOrder = XYZ) : Vector {
@@ -825,13 +860,13 @@ class Vector {
             _x = Math.atan2( 2 * ( q.x * q.w + q.y * q.z ), ( sqw - sqx + sqy - sqz ) );
             _y = Math.atan2( 2 * ( q.x * q.z + q.y * q.w ), ( sqw + sqx - sqy - sqz ) );
             _z = Math.asin(  Maths.clamp( 2 * ( q.z * q.w - q.x * q.y ), -1, 1 ) );
-        } //order
+        }
 
         set_xyz(_x,_y,_z);
 
         return this;
 
-    } //setEulerFromQuaternion
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function degrees() : Vector {
@@ -840,7 +875,7 @@ class Vector {
 
         return this;
 
-    } //degrees
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public function radians() : Vector {
@@ -849,21 +884,21 @@ class Vector {
 
         return this;
 
-    } //radians
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function Degrees( _radian_vector:Vector ) : Vector {
 
         return _radian_vector.clone().degrees();
 
-    } //Degrees
+    }
 
     #if !luxe_no_hotpath_inline @:extern inline #end
     public static function Radians( _degree_vector:Vector ) : Vector {
 
         return _degree_vector.clone().radians();
 
-    } //Radians
+    }
 
 } //Vector class
 
@@ -878,7 +913,7 @@ class Vector {
     var YZX = 4;
     var XZY = 5;
 
-} //ComponentOrder
+}
 
 
 @:forward
@@ -927,4 +962,4 @@ abstract Vec(Vector) from Vector to Vector {
     @:communitative @:op(A - B) static inline function _subtract_scalar_int(lhs:Vec, rhs:Int) : Vec {
         return Vector.SubtractScalar(lhs,rhs);
     }
-} //Vec
+}

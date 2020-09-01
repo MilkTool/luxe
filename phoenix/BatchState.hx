@@ -55,7 +55,7 @@ class BatchState {
                 if(last_texture_id != geom_state.texture.id){
 
                     last_texture_id = geom_state.texture.id;
-                    if(geom_state.texture.texture != null) {
+                    if(geom_state.texture.texture != #if snow_web null #else 0 #end) {
                         geom_state.texture.bind();
                     }
 
@@ -63,7 +63,7 @@ class BatchState {
 
             } else {
 
-                Luxe.renderer.state.bindTexture2D(null);
+                Luxe.renderer.state.bindTexture2D(#if snow_web null #else 0 #end);
                 last_texture_id = null;
 
             } //geom_state.texture !=null
@@ -79,7 +79,7 @@ class BatchState {
                     _shader = batcher.renderer.shaders.plain.shader;
                 }
 
-            } //_shader
+            }
 
             if(last_shader_id != _shader.program) {
                 batcher.apply_default_uniforms(_shader);
@@ -134,7 +134,7 @@ class BatchState {
 
                     } //last clip_rect
 
-                } //clip_rect
+                }
 
             } else { //clip is false
 
@@ -148,18 +148,18 @@ class BatchState {
             // finally, mark the state as clean.
         geom_state.clean();
 
-    } //activate
+    }
 
     public function deactivate(batcher:Batcher) {
 
             //undo any textures we bound last
         if(last_texture_id != null) {
-            batcher.renderer.state.bindTexture2D(null);
+            batcher.renderer.state.bindTexture2D(#if snow_web null #else 0 #end);
         }
 
             //for now we just disable any shader because other
             //batchers are not aware of us yet.
-        batcher.renderer.state.useProgram(null);
+        batcher.renderer.state.useProgram(#if snow_web null #else 0 #end);
 
             //remove clipping
         if(is_clipping) GL.disable(GL.SCISSOR_TEST);
@@ -169,7 +169,7 @@ class BatchState {
         GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
         GL.blendEquation(GL.FUNC_ADD);
 
-    } //deactivate
+    }
 
     public function update( geom:Geometry ) : Bool {
 
@@ -183,7 +183,7 @@ class BatchState {
 
         return geom_state.dirty || (last_clip_rect != clip_rect);
 
-    } //update
+    }
 
 
 //noisy debug stuff

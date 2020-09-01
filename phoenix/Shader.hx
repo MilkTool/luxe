@@ -17,26 +17,47 @@ import snow.modules.opengl.GL;
 import snow.types.Types.Error;
 import snow.systems.assets.Asset;
 
+#if !web
+import ceramic.IntMap;
+#end
 
 @:allow(phoenix.Shader)
 @:allow(phoenix.geometry.Geometry)
 class Uniforms {
 
-    var ints        : Map<String, Uniform<Int>>;
-    var floats      : Map<String, Uniform<Float>>;
-    var vector2s    : Map<String, Uniform<Vector>>;
-    var vector2arrs : Map<String, Uniform<Float32Array>>;
-    var vector3s    : Map<String, Uniform<Vector>>;
-    var vector3arrs : Map<String, Uniform<Float32Array>>;
-    var vector4s    : Map<String, Uniform<Vector>>;
-    var vector4arrs : Map<String, Uniform<Float32Array>>;
-    var matrix4s    : Map<String, Uniform<Matrix>>;
-    var matrix4arrs : Map<String, Uniform<Float32Array>>;
-    var colors      : Map<String, Uniform<Color>>;
-    var textures    : Map<String, Uniform<Texture>>;
+#if web
+    var ints        : Map<Location,Uniform<Int>>;
+    var floats      : Map<Location,Uniform<Float>>;
+    var floatarrs   : Map<Location,Uniform<Float32Array>>;
+    var vector2s    : Map<Location,Uniform<Vector>>;
+    var vector2arrs : Map<Location,Uniform<Float32Array>>;
+    var vector3s    : Map<Location,Uniform<Vector>>;
+    var vector3arrs : Map<Location,Uniform<Float32Array>>;
+    var vector4s    : Map<Location,Uniform<Vector>>;
+    var vector4arrs : Map<Location,Uniform<Float32Array>>;
+    var matrix4s    : Map<Location,Uniform<Matrix>>;
+    var matrix4arrs : Map<Location,Uniform<Float32Array>>;
+    var colors      : Map<Location,Uniform<Color>>;
+    var textures    : Map<Location,Uniform<Texture>>;
+#else
+    var ints        : IntMap<Uniform<Int>>;
+    var floats      : IntMap<Uniform<Float>>;
+    var floatarrs   : IntMap<Uniform<Float32Array>>;
+    var vector2s    : IntMap<Uniform<Vector>>;
+    var vector2arrs : IntMap<Uniform<Float32Array>>;
+    var vector3s    : IntMap<Uniform<Vector>>;
+    var vector3arrs : IntMap<Uniform<Float32Array>>;
+    var vector4s    : IntMap<Uniform<Vector>>;
+    var vector4arrs : IntMap<Uniform<Float32Array>>;
+    var matrix4s    : IntMap<Uniform<Matrix>>;
+    var matrix4arrs : IntMap<Uniform<Float32Array>>;
+    var colors      : IntMap<Uniform<Color>>;
+    var textures    : IntMap<Uniform<Texture>>;
+#end
 
     var dirty_ints          : Array<Uniform<Int>>;
     var dirty_floats        : Array<Uniform<Float>>;
+    var dirty_floatarrs     : Array<Uniform<Float32Array>>;
     var dirty_vector2s      : Array<Uniform<Vector>>;
     var dirty_vector2arrs   : Array<Uniform<Float32Array>>;
     var dirty_vector3s      : Array<Uniform<Vector>>;
@@ -50,7 +71,7 @@ class Uniforms {
 
     public function new() {
         clear();
-    } //new
+    }
 
     function destroy() {
         ints = null;
@@ -83,8 +104,10 @@ class Uniforms {
 
         destroy();
 
+#if web
         ints        = new Map();
         floats      = new Map();
+        floatarrs   = new Map();
         vector2s    = new Map();
         vector2arrs = new Map();
         vector3s    = new Map();
@@ -95,9 +118,25 @@ class Uniforms {
         matrix4arrs = new Map();
         colors      = new Map();
         textures    = new Map();
+#else
+        ints        = new IntMap();
+        floats      = new IntMap();
+        floatarrs   = new IntMap();
+        vector2s    = new IntMap();
+        vector2arrs = new IntMap();
+        vector3s    = new IntMap();
+        vector3arrs = new IntMap();
+        vector4s    = new IntMap();
+        vector4arrs = new IntMap();
+        matrix4s    = new IntMap();
+        matrix4arrs = new IntMap();
+        colors      = new IntMap();
+        textures    = new IntMap();
+#end
 
         dirty_ints          = [];
         dirty_floats        = [];
+        dirty_floatarrs     = [];
         dirty_vector2s      = [];
         dirty_vector2arrs   = [];
         dirty_vector3s      = [];
@@ -109,187 +148,202 @@ class Uniforms {
         dirty_colors        = [];
         dirty_textures      = [];
 
-    } //clear
+    }
 
     public inline function set_int( _name:String, _value:Int, _location:Location ) : Void {
 
-        var _int = ints.get(_name);
+        var _int = ints.get(_location);
 
         if(_int != null) {
             _int.value = _value;
         } else {
             _int = new Uniform<Int>(_name, _value, _location);
-            ints.set(_name, _int);
+            ints.set(_location, _int);
         }
 
         dirty_ints.push(_int);
 
-    } //set_int
+    }
 
     public inline function set_float( _name:String, _value:Float, _location:Location ) : Void {
 
-        var _float = floats.get(_name);
+        var _float = floats.get(_location);
 
         if(_float != null) {
             _float.value = _value;
         } else {
             _float = new Uniform<Float>(_name, _value, _location);
-            floats.set(_name, _float);
+            floats.set(_location, _float);
         }
 
         dirty_floats.push(_float);
 
-    } //set_float
+    }
+
+    public inline function set_float_arr( _name:String, _value:Float32Array, _location:Location ) : Void {
+
+        var _float = floatarrs.get(_location);
+
+        if(_float != null) {
+            _float.value = _value;
+        } else {
+            _float = new Uniform<Float32Array>(_name, _value, _location);
+            floatarrs.set(_location, _float);
+        }
+
+        dirty_floatarrs.push(_float);
+
+    }
 
     public inline function set_vector2( _name:String, _value:Vector, _location:Location ) : Void {
 
-        var _vector2 = vector2s.get(_name);
+        var _vector2 = vector2s.get(_location);
 
         if(_vector2 != null) {
             _vector2.value = _value;
         } else {
             _vector2 = new Uniform<Vector>(_name, _value, _location);
-            vector2s.set(_name, _vector2);
+            vector2s.set(_location, _vector2);
         }
 
         dirty_vector2s.push(_vector2);
 
-    } //set_vector2
+    }
 
     public inline function set_vector2_arr( _name:String, _value:Float32Array, _location:Location ) : Void {
 
-        var _vector2 = vector2arrs.get(_name);
+        var _vector2 = vector2arrs.get(_location);
 
         if(_vector2 != null) {
             _vector2.value = _value;
         } else {
             _vector2 = new Uniform<Float32Array>(_name, _value, _location);
-            vector2arrs.set(_name, _vector2);
+            vector2arrs.set(_location, _vector2);
         }
 
         dirty_vector2arrs.push(_vector2);
 
-    } //set_vector2_arr
+    }
 
     public inline function set_vector3( _name:String, _value:Vector, _location:Location ) : Void {
 
-        var _vector3 = vector3s.get(_name);
+        var _vector3 = vector3s.get(_location);
 
         if(_vector3 != null) {
             _vector3.value = _value;
         } else {
             _vector3 = new Uniform<Vector>(_name, _value, _location);
-            vector3s.set(_name, _vector3);
+            vector3s.set(_location, _vector3);
         }
 
         dirty_vector3s.push(_vector3);
 
-    } //set_vector3
+    }
 
     public inline function set_vector3_arr( _name:String, _value:Float32Array, _location:Location ) : Void {
 
-        var _vector3 = vector3arrs.get(_name);
+        var _vector3 = vector3arrs.get(_location);
 
         if(_vector3 != null) {
             _vector3.value = _value;
         } else {
             _vector3 = new Uniform<Float32Array>(_name, _value, _location);
-            vector3arrs.set(_name, _vector3);
+            vector3arrs.set(_location, _vector3);
         }
 
         dirty_vector3arrs.push(_vector3);
 
-    } //set_vector3_arr
+    }
 
     public inline function set_vector4( _name:String, _value:Vector, _location:Location ) : Void {
 
-        var _vector4 = vector4s.get(_name);
+        var _vector4 = vector4s.get(_location);
 
         if(_vector4 != null) {
             _vector4.value = _value;
         } else {
             _vector4 = new Uniform<Vector>(_name, _value, _location);
-            vector4s.set(_name, _vector4);
+            vector4s.set(_location, _vector4);
         }
 
         dirty_vector4s.push(_vector4);
 
-    } //set_vector4
+    }
 
     public inline function set_vector4_arr( _name:String, _value:Float32Array, _location:Location ) : Void {
 
-        var _vector4 = vector4arrs.get(_name);
+        var _vector4 = vector4arrs.get(_location);
 
         if(_vector4 != null) {
             _vector4.value = _value;
         } else {
             _vector4 = new Uniform<Float32Array>(_name, _value, _location);
-            vector4arrs.set(_name, _vector4);
+            vector4arrs.set(_location, _vector4);
         }
 
         dirty_vector4arrs.push(_vector4);
 
-    } //set_vector4_arr
+    }
 
     public inline function set_matrix4( _name:String, _value:Matrix, _location:Location ) : Void {
 
-        var _matrix4 = matrix4s.get(_name);
+        var _matrix4 = matrix4s.get(_location);
 
         if(_matrix4 != null) {
             _matrix4.value = _value;
         } else {
             _matrix4 = new Uniform<Matrix>(_name, _value, _location);
-            matrix4s.set(_name, _matrix4);
+            matrix4s.set(_location, _matrix4);
         }
 
         dirty_matrix4s.push(_matrix4);
 
-    } //set_matrix4
+    }
 
     public inline function set_matrix4_arr( _name:String, _value:Float32Array, _location:Location ) : Void {
 
-        var _matrix4 = matrix4arrs.get(_name);
+        var _matrix4 = matrix4arrs.get(_location);
 
         if(_matrix4 != null) {
             _matrix4.value = _value;
         } else {
             _matrix4 = new Uniform<Float32Array>(_name, _value, _location);
-            matrix4arrs.set(_name, _matrix4);
+            matrix4arrs.set(_location, _matrix4);
         }
 
         dirty_matrix4arrs.push(_matrix4);
 
-    } //set_matrix4_arr
+    }
 
     public inline function set_color( _name:String, _value:Color, _location:Location ) : Void {
 
-        var _color = colors.get(_name);
+        var _color = colors.get(_location);
 
         if(_color != null) {
             _color.value = _value;
         } else {
             _color = new Uniform<Color>(_name, _value, _location);
-            colors.set(_name, _color);
+            colors.set(_location, _color);
         }
 
         dirty_colors.push(_color);
 
-    } //set_color
+    }
 
     public inline function set_texture( _name:String, _value:Texture, _location:Location ) : Void {
 
-        var _texture = textures.get(_name);
+        var _texture = textures.get(_location);
 
         if(_texture != null) {
             _texture.value = _value;
         } else {
             _texture = new Uniform<Texture>(_name, _value, _location);
-            textures.set(_name, _texture);
+            textures.set(_location, _texture);
         }
 
         dirty_textures.push(_texture);
 
-    } //set_texture
+    }
 
     //inline
     public function apply() {
@@ -302,6 +356,11 @@ class Uniforms {
         while(dirty_floats.length > 0) {
             var uf = dirty_floats.pop();
             GL.uniform1f(uf.location, uf.value);
+        }
+
+        while(dirty_floatarrs.length > 0) {
+            var uf = dirty_floatarrs.pop();
+            GL.uniform1fv(uf.location, uf.value);
         }
 
         while(dirty_vector2s.length > 0) {
@@ -354,9 +413,9 @@ class Uniforms {
             GL.uniformMatrix4fv(uf.location, false, uf.value);
         }
 
-    } //apply
+    }
 
-} //Uniforms
+}
 
 class Shader extends Resource {
 
@@ -367,10 +426,10 @@ class Shader extends Resource {
     public var vert_id : String = '';
     public var frag_id : String = '';
 
-    public var vert_shader : GLShader;
-    public var frag_shader : GLShader;
-    public var program : GLProgram;
-    public var shader : GLShader;
+    public var vert_shader : GLShader = #if snow_web null #else 0 #end;
+    public var frag_shader : GLShader = #if snow_web null #else 0 #end;
+    public var program : GLProgram = #if snow_web null #else 0 #end;
+    public var shader : GLShader = #if snow_web null #else 0 #end;
 
     public var no_default_uniforms : Bool = false;
     public var proj_attribute : Location;
@@ -392,7 +451,7 @@ class Shader extends Resource {
 
         uniforms = new Uniforms();
 
-    } //new
+    }
 
     public inline function activate() {
 
@@ -403,21 +462,21 @@ class Shader extends Resource {
             //I dont remember what this was doing here exactly
         Luxe.renderer.state.activeTexture(GL.TEXTURE0);
 
-    } //activate
+    }
 
     public function use() {
 
-        if(program != null) {
+        if(program != #if snow_web null #else 0 #end) {
             Luxe.renderer.state.useProgram( program );
         }
 
-    } //use
+    }
 
     public inline function deactivate() {
 
-        Luxe.renderer.state.useProgram( null );
+        Luxe.renderer.state.useProgram( #if snow_web null #else 0 #end );
 
-    } //deactivate
+    }
 
         /** Create a new shader based on the source of this shader. */
     public function clone( _id:String ) {
@@ -432,55 +491,59 @@ class Shader extends Resource {
 
         return _clone;
 
-    } //clone
+    }
 
     public inline function set_int( _name:String, _value:Int ) : Void {
         uniforms.set_int(_name, _value, location(_name));
-    } //set_int
+    }
 
     public inline function set_float( _name:String, _value:Float ) : Void {
         uniforms.set_float(_name, _value, location(_name));
-    } //set_float
+    }
+
+    public inline function set_float_arr( _name:String, _value:Float32Array ) : Void {
+        uniforms.set_float_arr(_name, _value, location(_name));
+    }
 
     public inline function set_vector2( _name:String, _value:Vector ) : Void {
         uniforms.set_vector2(_name, _value, location(_name));
-    } //set_vector2
+    }
 
     public inline function set_vector2_arr( _name:String, _value:Float32Array ) : Void {
         uniforms.set_vector2_arr(_name, _value, location(_name));
-    } //set_vector2_arr
+    }
 
     public inline function set_vector3( _name:String, _value:Vector ) : Void {
         uniforms.set_vector3(_name, _value, location(_name));
-    } //set_vector3
+    }
 
     public inline function set_vector3_arr( _name:String, _value:Float32Array ) : Void {
         uniforms.set_vector3_arr(_name, _value, location(_name));
-    } //set_vector3_arr
+    }
 
     public inline function set_vector4( _name:String, _value:Vector ) : Void {
         uniforms.set_vector4(_name, _value, location(_name));
-    } //set_vector4
+    }
 
     public inline function set_vector4_arr( _name:String, _value:Float32Array ) : Void {
         uniforms.set_vector4_arr(_name, _value, location(_name));
-    } //set_vector4_arr
+    }
 
     public inline function set_matrix4( _name:String, _value:Matrix ) : Void {
         uniforms.set_matrix4(_name, _value, location(_name));
-    } //set_matrix4
+    }
 
     public inline function set_matrix4_arr( _name:String, _value:Float32Array ) : Void {
         uniforms.set_matrix4_arr(_name, _value, location(_name));
-    } //set_matrix4_arr
+    }
 
     public inline function set_color( _name:String, _value:Color ) : Void {
         uniforms.set_color(_name, _value, location(_name));
-    } //set_color
+    }
 
     public inline function set_texture( _name:String, _value:Texture ) : Void {
         uniforms.set_texture(_name, _value, location(_name));
-    } //set_texture
+    }
 
 
     public function compile( _type : Int, _source:String ) : GLShader {
@@ -511,11 +574,11 @@ class Shader extends Resource {
             add_log( _log.length == 0 ? format_log(GL.getShaderInfoLog(_shader)) : _log );
 
             GL.deleteShader(_shader);
-            _shader = null;
+            _shader = #if snow_web null #else 0 #end;
 
-            return null;
+            return #if snow_web null #else 0 #end;
 
-        } //compile_status
+        }
 
         return _shader;
     }
@@ -539,7 +602,7 @@ class Shader extends Resource {
             add_log("\tFailed to link shader program:");
             add_log( format_log(GL.getProgramInfoLog(program)) );
             GL.deleteProgram(program);
-            program = null;
+            program = #if snow_web null #else 0 #end;
             return false;
         }
 
@@ -564,20 +627,20 @@ class Shader extends Resource {
                 var _tex6_attribute = location( 'tex6' );
                 var _tex7_attribute = location( 'tex7' );
 
-                if(_tex0_attribute != null) GL.uniform1i( _tex0_attribute, 0 );
-                if(_tex1_attribute != null) GL.uniform1i( _tex1_attribute, 1 );
-                if(_tex2_attribute != null) GL.uniform1i( _tex2_attribute, 2 );
-                if(_tex3_attribute != null) GL.uniform1i( _tex3_attribute, 3 );
-                if(_tex4_attribute != null) GL.uniform1i( _tex4_attribute, 4 );
-                if(_tex5_attribute != null) GL.uniform1i( _tex5_attribute, 5 );
-                if(_tex6_attribute != null) GL.uniform1i( _tex6_attribute, 6 );
-                if(_tex7_attribute != null) GL.uniform1i( _tex7_attribute, 7 );
+                if(_tex0_attribute != #if snow_web null #else 0 #end) GL.uniform1i( _tex0_attribute, 0 );
+                if(_tex1_attribute != #if snow_web null #else 0 #end) GL.uniform1i( _tex1_attribute, 1 );
+                if(_tex2_attribute != #if snow_web null #else 0 #end) GL.uniform1i( _tex2_attribute, 2 );
+                if(_tex3_attribute != #if snow_web null #else 0 #end) GL.uniform1i( _tex3_attribute, 3 );
+                if(_tex4_attribute != #if snow_web null #else 0 #end) GL.uniform1i( _tex4_attribute, 4 );
+                if(_tex5_attribute != #if snow_web null #else 0 #end) GL.uniform1i( _tex5_attribute, 5 );
+                if(_tex6_attribute != #if snow_web null #else 0 #end) GL.uniform1i( _tex6_attribute, 6 );
+                if(_tex7_attribute != #if snow_web null #else 0 #end) GL.uniform1i( _tex7_attribute, 7 );
 
             }
 
         return true;
 
-    } //link
+    }
 
     public inline function location( _name : String ) : Location {
         return GL.getUniformLocation( program, _name );
@@ -587,16 +650,16 @@ class Shader extends Resource {
 
     override function clear() {
 
-        if( vert_shader != null ) GL.deleteShader( vert_shader );
-        if( frag_shader != null ) GL.deleteShader( frag_shader );
-        if( program != null )     GL.deleteProgram( program );
+        if( vert_shader != #if snow_web null #else 0 #end ) GL.deleteShader( vert_shader );
+        if( frag_shader != #if snow_web null #else 0 #end ) GL.deleteShader( frag_shader );
+        if( program != #if snow_web null #else 0 #end )     GL.deleteProgram( program );
 
         vert_source = null;
         frag_source = null;
 
         uniforms.clear();
 
-    } //clear
+    }
 
     override public function reload() {
 
@@ -647,7 +710,7 @@ class Shader extends Resource {
 
                 _wait.push(_vert);
 
-            } //vert_source
+            }
 
             Promise.all(_wait).then(function(){
 
@@ -670,7 +733,7 @@ class Shader extends Resource {
 
         }); //promise
 
-    } //reload
+    }
 
         /** Loads shaders from a string, compiles, and links them */
     public function from_string( _vert_source:String, _fragment_source:String ) {
@@ -690,7 +753,7 @@ class Shader extends Resource {
         vert_shader = compile( GL.VERTEX_SHADER, vert_source );
         frag_shader = compile( GL.FRAGMENT_SHADER, frag_source );
 
-        if( vert_shader == null || frag_shader == null ) {
+        if( vert_shader == #if snow_web null #else 0 #end || frag_shader == #if snow_web null #else 0 #end ) {
             dump_log();
             return false;
         }
@@ -722,7 +785,7 @@ class Shader extends Resource {
         return _items.join('\n');
     }
 
-} //Shader
+}
 
 @:generic
 private class Uniform<T> {
@@ -737,7 +800,7 @@ private class Uniform<T> {
         location = _location;
     }
 
-} //Uniform
+}
 
 private typedef Location = GLUniformLocation;
 
